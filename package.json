@@ -1,0 +1,27 @@
+{
+  "name": "rc-js-client-node-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "dotenv": "^6.0.0",
+    "promise": "^8.0.1",
+    "ringcentral": "^3.2.0",
+    "typescript": "^2.9.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RukaiYu/rc-js-client-node-test.git"
+  },
+  "author": "Rukai Yu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RukaiYu/rc-js-client-node-test/issues"
+  },
+  "homepage": "https://github.com/RukaiYu/rc-js-client-node-test#readme"
+}
