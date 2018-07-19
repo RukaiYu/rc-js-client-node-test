@@ -2,11 +2,15 @@ var Week1Module = require('./src/RC-RY-WEEK1');
 
 var week1 = new Week1Module();
 
+const account = {
+    userName: process.env.RINGCENTRAL_USERNAME,
+    password: process.env.RINGCENTRAL_PASSWORD
+}
+
 week1
-    .login()
+    .login(account)
     .then(res => {
         week1.listenOnPresence();
 
-        const accountId = '230919004';
         week1.readCallRecordings();
     });

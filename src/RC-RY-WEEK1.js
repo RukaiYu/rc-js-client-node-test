@@ -46,16 +46,16 @@ module.exports = class Week1Module {
             .catch(error => console.log('Listen presence failed.', error));
     }
 
-    login() {
+    login(account) {
         return new Promise((resolve, reject) => {
             console.log('Logging in ...');
             const platform = this.platform;
 
             // login
             platform.login({
-                    username: '+18582573464', // phone number in full format
+                    username: account.userName, // phone number in full format
                     extension: '', // leave blank if direct number is used
-                    password: 'Test!123'
+                    password: account.password
                 }).then(res => {
                     const token = res.json();
 
