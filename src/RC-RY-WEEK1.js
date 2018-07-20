@@ -10,12 +10,13 @@ if (envResult.error) {
 
 const appKey = process.env.RINGCENTRAL_CLIENT_ID;
 const appSecret = process.env.RINGCENTRAL_CLIENT_SECRET;
+const serverUrl = process.env.RINGCENTRAL_SERVER_URL;
 
 module.exports = class Week1Module {
 
     constructor() {
         this.rcsdk = new SDK({
-            server: SDK.server.sandbox,
+            server: serverUrl,
             appKey: appKey,
             appSecret: appSecret,
             redirectUri: '' // optional, but is required for Implicit Grant and Authorization Code OAuth Flows (see below)
