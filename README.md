@@ -8,5 +8,5 @@
 yarn install
 cp .env.sample .env
 edit .env  // fill your RC app credential.
-yarn test
+node main.js
 ```
