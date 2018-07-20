@@ -76,7 +76,7 @@ module.exports = class Week1Module {
         });
     }
 
-    readCallRecordings(accountId) {
+    readCallRecordings() {
 
         let dateFrom = new Date(Date.now() - 24 * 60 * 60 * 1000); // A day ago
         this.client.account().extension().callLog().list({
@@ -89,17 +89,13 @@ module.exports = class Week1Module {
                 if (results.records && results.records.length) {
                     console.log(`Get total about: ${results.records.length} call logs`);
                     const firstRecord = results.records[0];
+                    const contentUrl = `/account/~/recording/${firstRecord.recording.id}/content`;
 
                     this
-                        .client
-                        .account()
-                        .extension()
-                        .callLog(firstRecord.id)
-                        .get({
-                            view: 'Detailed'
-                        })
+                        .platform
+                        .get(contentUrl)
                         .then(res => {
-                            res.response().body.pipe(fs.createWriteStream(`./${firstRecord.sessionId}.mp3`));
+                            res.response().body.pipe(fs.createWriteStream(`./${firstRecord.recording.id}.mp3`));
                         });
 
                 } else {
