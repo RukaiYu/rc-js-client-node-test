@@ -1,11 +1,12 @@
 var SDK = require('ringcentral');
 var fs = require('fs');
 var dotenv = require('dotenv');
+var RingCentralClient = require('ringcentral-client').Client;
 
 const envResult = dotenv.config();
 if (envResult.error) {
     console.log('dev.env configuration error.');
-    
+
 }
 
 const appKey = process.env.RINGCENTRAL_CLIENT_ID;
@@ -21,6 +22,8 @@ module.exports = class Week1Module {
             appSecret: appSecret,
             redirectUri: '' // optional, but is required for Implicit Grant and Authorization Code OAuth Flows (see below)
         });
+
+        this.client = new RingCentralClient(this.rcsdk);
 
         this.subscriptionCacheKey = 'rc-rk-subscription-cache'
         const subscription = this.rcsdk.createCachedSubscription(this.subscriptionCacheKey);
@@ -51,7 +54,6 @@ module.exports = class Week1Module {
         return new Promise((resolve, reject) => {
             console.log('Logging in ...');
             const platform = this.platform;
-
             // login
             platform.login({
                     username: account.userName, // phone number in full format
@@ -75,26 +77,36 @@ module.exports = class Week1Module {
     }
 
     readCallRecordings(accountId) {
-        this
-            .platform
-            .get(`/account/${accountId || '~'}/call-log`)
-            .then(res => {
-                const data = res.json();
-                if (data && data.length) {
-                    console.log(`Get total about: ${data.records.length} call logs`);
-                    const firstRecord = data.records[0];
-                    const contentUrl = `/account/${accountId}/recording/${firstRecord.sessionId}/content`;
-                    console.log(`downloading first record content from URL: ${contentUrl}...`, firstRecord);
+
+        let dateFrom = new Date(Date.now() - 24 * 60 * 60 * 1000); // A day ago
+        this.client.account().extension().callLog().list({
+                dateFrom: dateFrom.toISOString(),
+                withRecording: true
+            })
+            .then(results => {
+                console.log("Recent call logs", results.records);
+
+                if (results.records && results.records.length) {
+                    console.log(`Get total about: ${results.records.length} call logs`);
+                    const firstRecord = results.records[0];
+
                     this
-                        .platform
-                        .get(contentUrl)
+                        .client
+                        .account()
+                        .extension()
+                        .callLog(firstRecord.id)
+                        .get({
+                            view: 'Detailed'
+                        })
                         .then(res => {
                             res.response().body.pipe(fs.createWriteStream(`./${firstRecord.sessionId}.mp3`));
                         });
-                } else {
-                    console.log('no call recordings.');
-                }
 
-            })
+                } else {
+                    console.log('no any call log which has recordings.');
+                }
+            }, e => {
+                console.error("Fail to get call logs", e);
+            });
     }
 };
